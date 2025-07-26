@@ -2,18 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import { addItemToCart } from "@/lib/actions/cart.actions";
-import { CartItem } from "@/lib/types";
+import { Cart, CartItem } from "@/lib/types";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const AddToCart = ({ item }: { item: CartItem }) => {
+const AddToCart = ({ item, cart }: { item: CartItem; cart?: Cart }) => {
   const router = useRouter();
   const handleAddToCart = async () => {
     const res = await addItemToCart(item);
 
     if (res.success) {
-      toast.success(`${item.name} added to cart`, {
+      toast.success(res.message, {
         action: {
           label: "Go to cart",
           onClick: () => router.push("/cart"),
