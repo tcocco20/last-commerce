@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 
-export default auth((req: NextRequest) => {
+export function middleware(req: NextRequest) {
   // Check if sessionCartId cookie exists
   if (!req.cookies.get("sessionCartId")) {
     const sessionCartId = crypto.randomUUID();
@@ -19,7 +18,7 @@ export default auth((req: NextRequest) => {
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
