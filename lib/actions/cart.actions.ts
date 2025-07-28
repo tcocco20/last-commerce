@@ -152,20 +152,24 @@ export async function removeItemFromCart(productId: string) {
 
     if (!exists) throw new Error("Item not found in cart");
 
+    let newItems: CartItem[] = [];
+
     if (exists.qty === 1) {
-      (cart.items as CartItem[]).filter(
+      console.error("Removing item from cart:", exists);
+      newItems = (cart.items as CartItem[]).filter(
         (x) => x.productId !== exists.productId
       );
     } else {
-      (cart.items as CartItem[]).find((x) => x.productId === productId)!.qty =
-        exists.qty - 1;
+      newItems = (cart.items as CartItem[]).map((x) =>
+        x.productId === productId ? { ...x, qty: x.qty - 1 } : x
+      );
     }
 
     await prisma.cart.update({
       where: { id: cart.id },
       data: {
-        items: cart.items,
-        ...calcPrice(cart.items as CartItem[]),
+        items: newItems,
+        ...calcPrice(newItems as CartItem[]),
       },
     });
 
