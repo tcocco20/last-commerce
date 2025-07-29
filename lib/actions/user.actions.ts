@@ -78,7 +78,7 @@ export async function getUserById(id: string) {
       where: { id },
     });
     return user;
-  } catch (error) {
+  } catch (_) {
     return null;
   }
 }
