@@ -78,7 +78,8 @@ export async function getUserById(id: string) {
       where: { id },
     });
     return user;
-  } catch (_) {
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
     return null;
   }
 }
