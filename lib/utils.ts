@@ -48,3 +48,20 @@ export function roundTwo(value: number | string): number {
     throw new Error("Value must be a number or a string representing a number");
   }
 }
+
+const CURRENCY_FORMATTER = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+export const formatCurrency = (value: number | string | null): string => {
+  if (typeof value === "string") {
+    return CURRENCY_FORMATTER.format(Number(value));
+  } else if (typeof value === "number") {
+    return CURRENCY_FORMATTER.format(value);
+  } else {
+    return "NaN";
+  }
+};
