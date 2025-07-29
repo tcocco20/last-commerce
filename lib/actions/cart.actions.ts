@@ -155,7 +155,6 @@ export async function removeItemFromCart(productId: string) {
     let newItems: CartItem[] = [];
 
     if (exists.qty === 1) {
-      console.error("Removing item from cart:", exists);
       newItems = (cart.items as CartItem[]).filter(
         (x) => x.productId !== exists.productId
       );
