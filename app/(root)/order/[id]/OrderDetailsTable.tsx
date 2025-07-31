@@ -27,8 +27,6 @@ const OrderDetailsTable = ({ order }: { order: Order }) => {
     isDelivered,
     paidAt,
     deliveredAt,
-    createdAt,
-    updatedAt,
     paymentMethod,
     id,
   } = order;
