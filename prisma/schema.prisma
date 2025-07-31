@@ -118,7 +118,7 @@ model Order {
   updatedAt       DateTime  @default(now())
 
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  OrderItem OrderItem[]
+  orderitems OrderItem[]
 }
 
 model OrderItem {
