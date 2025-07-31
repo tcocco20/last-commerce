@@ -57,7 +57,7 @@ export const cartItemSchema = z.object({
   productId: z.string().min(1, "Invalid product ID"),
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
-  qty: z.number().int().nonnegative("Quantity must be a positive number"),
+  quantity: z.number().int().nonnegative("Quantity must be a positive number"),
   image: z.string().min(1, "Image URL is required"),
   price: currency,
 });
@@ -113,5 +113,5 @@ export const insertOrderItemSchema = z.object({
   image: z.string(),
   name: z.string(),
   price: currency,
-  qty: z.number(),
+  quantity: z.number(),
 });

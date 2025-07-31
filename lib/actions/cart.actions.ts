@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 
 const calcPrice = (items: CartItem[]) => {
   const itemsPrice = roundTwo(
-      items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0)
+      items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0)
     ),
     shippingPrice = roundTwo(itemsPrice > 100 ? 0 : 10),
     taxPrice = roundTwo(itemsPrice * 0.15),
@@ -69,12 +69,12 @@ export async function addItemToCart(data: CartItem) {
       );
 
       if (existentItem) {
-        if (product.stock < existentItem.qty + item.qty)
+        if (product.stock < existentItem.quantity + item.quantity)
           throw new Error("Not enough stock available");
 
         (cart.items as CartItem[]).find(
           (x) => x.productId === item.productId
-        )!.qty = existentItem.qty + 1;
+        )!.quantity = existentItem.quantity + 1;
       } else {
         if (product.stock < 1) throw new Error("Not enough stock available");
 
@@ -154,13 +154,13 @@ export async function removeItemFromCart(productId: string) {
 
     let newItems: CartItem[] = [];
 
-    if (exists.qty === 1) {
+    if (exists.quantity === 1) {
       newItems = (cart.items as CartItem[]).filter(
         (x) => x.productId !== exists.productId
       );
     } else {
       newItems = (cart.items as CartItem[]).map((x) =>
-        x.productId === productId ? { ...x, qty: x.qty - 1 } : x
+        x.productId === productId ? { ...x, quantity: x.quantity - 1 } : x
       );
     }
 
