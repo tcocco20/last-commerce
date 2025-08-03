@@ -14,6 +14,11 @@ import { Order } from "@/lib/types";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
 
 const OrderDetailsTable = ({ order }: { order: Order }) => {
   const {
