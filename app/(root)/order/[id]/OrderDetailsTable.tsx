@@ -14,8 +14,21 @@ import { Order } from "@/lib/types";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import {
+  approvePayPalOrder,
+  createPayPalOrder,
+} from "@/lib/actions/order.actions";
+import { toast } from "sonner";
+import PrintLoadingStatus from "./PrintLoadingStatus";
 
-const OrderDetailsTable = ({ order }: { order: Order }) => {
+const OrderDetailsTable = ({
+  order,
+  paypalClientId,
+}: {
+  order: Order;
+  paypalClientId: string;
+}) => {
   const {
     shippingAddress,
     orderitems,
@@ -30,6 +43,31 @@ const OrderDetailsTable = ({ order }: { order: Order }) => {
     paymentMethod,
     id,
   } = order;
+
+  const handleCreatePayPalOrder = async () => {
+    const res = await createPayPalOrder(order.id);
+
+    if (!res.success) {
+      toast.error(res.message, {
+        richColors: true,
+      });
+    }
+
+    return res.data;
+  };
+
+  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
+    const res = await approvePayPalOrder(order.id, data);
+
+    if (!res.success) {
+      toast.error(res.message, {
+        richColors: true,
+      });
+    } else {
+      toast.success(res.message);
+    }
+  };
+
   return (
     <>
       <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
@@ -127,6 +165,17 @@ const OrderDetailsTable = ({ order }: { order: Order }) => {
                 <div>Total</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
+              {!isPaid && paymentMethod === "PayPal" && (
+                <div>
+                  <PayPalScriptProvider options={{ clientId: paypalClientId }}>
+                    <PrintLoadingStatus />
+                    <PayPalButtons
+                      createOrder={handleCreatePayPalOrder}
+                      onApprove={handleApprovePayPalOrder}
+                    />
+                  </PayPalScriptProvider>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

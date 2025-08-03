@@ -18,10 +18,13 @@ const OrderDetailsPage = async (props: { params: Promise<{ id: string }> }) => {
   }
   return (
     <OrderDetailsTable
-      order={{
-        ...order,
-        shippingAddress: order.shippingAddress as ShippingAddress,
-      } as Order}
+      order={
+        {
+          ...order,
+          shippingAddress: order.shippingAddress as ShippingAddress,
+        } as Order
+      }
+      paypalClientId={process.env.NEXT_PAYPAL_CLIENT_ID || "sb"}
     />
   );
 };
