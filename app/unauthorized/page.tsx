@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   title: "Unauthorized Access",
   description: "You are not authorized to view this page.",
 };
