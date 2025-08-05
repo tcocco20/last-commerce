@@ -21,13 +21,17 @@ import {
 } from "@/lib/actions/order.actions";
 import { toast } from "sonner";
 import PrintLoadingStatus from "./PrintLoadingStatus";
+import MarkAsPaidButton from "./MarkAsPaidButton";
+import MarkAsDeliveredButton from "./MarkAsDeliveredButton";
 
 const OrderDetailsTable = ({
   order,
   paypalClientId,
+  isAdmin,
 }: {
   order: Order;
   paypalClientId: string;
+  isAdmin: boolean;
 }) => {
   const {
     shippingAddress,
@@ -165,6 +169,7 @@ const OrderDetailsTable = ({
                 <div>Total</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
+              {/* PayPal */}
               {!isPaid && paymentMethod === "PayPal" && (
                 <div>
                   <PayPalScriptProvider options={{ clientId: paypalClientId }}>
@@ -175,6 +180,13 @@ const OrderDetailsTable = ({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {/* Cash on Delivery */}
+              {isAdmin && !isPaid && paymentMethod === "Cash on Delivery" && (
+                <MarkAsPaidButton orderId={order.id} />
+              )}
+              {isAdmin && isPaid && !isDelivered && (
+                <MarkAsDeliveredButton orderId={order.id} />
               )}
             </CardContent>
           </Card>
