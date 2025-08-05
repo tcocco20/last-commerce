@@ -23,15 +23,13 @@ export const metadata: Metadata = {
 
 const AdminOverviewPage = async () => {
   await requireAdmin();
-  
+
   const session = await auth();
   if (!session || session.user.role !== "admin") {
     throw new Error("Unauthorized access to admin dashboard");
   }
 
   const summary = await getOrderSummary();
-
-  console.log("Order Summary:", summary);
   return (
     <div className="space-y-2">
       <h2 className="h2-bold">Dashboard</h2>
