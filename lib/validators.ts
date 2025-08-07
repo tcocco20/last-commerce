@@ -21,8 +21,8 @@ export const insertProductSchema = z.object({
   images: z
     .array(z.string().url("Invalid image URL"))
     .min(1, "Product must have at least one image"),
-  // isFeatured: z.boolean(),
-  // banner: z.string().nullable(),
+  isFeatured: z.boolean(),
+  banner: z.string().nullable(),
   price: currency,
 });
 

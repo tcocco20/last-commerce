@@ -17,6 +17,7 @@ import { createProduct, updateProduct } from "@/lib/actions/product.actions";
 import { UploadButton } from "@/lib/uploadthing";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ProductForm = ({
   type,
@@ -62,6 +63,8 @@ const ProductForm = ({
     }
 
     const images = form.watch("images");
+    const isFeatured = form.watch("isFeatured");
+    const banner = form.watch("banner");
 
   return (
     <Form {...form}>
@@ -189,7 +192,45 @@ const ProductForm = ({
             )}
              />
         </div>
-        <div className="upload-field"></div>
+        <div className="upload-field">
+          Featured Product
+          <Card>
+            <CardContent className="space-y-2 mt-2">
+              <FormField
+                control={form.control}
+                name="isFeatured"
+                render={({ field }: { field: ControllerRenderProps<z.infer<typeof insertProductSchema>, "isFeatured">}) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                    <FormLabel>Is Featured</FormLabel>
+                  </FormItem>
+                )}
+              />
+              {isFeatured && banner && (
+                <Image
+                  src={banner}
+                  alt="Banner Image"
+                  width={1920}
+                  height={680}
+                  className="w-full object-cover rounded-sm object-center"
+                />
+              )}
+              {isFeatured && !banner && (
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res: {url: string}[]) => {
+                    form.setValue("banner", res[0].url);
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(`Upload failed: ${error.message}`, {richColors: true});
+                  }}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
         <div>
             <FormField
             control={form.control}
