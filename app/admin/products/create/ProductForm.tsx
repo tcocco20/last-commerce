@@ -6,13 +6,14 @@ import { Product } from "@/lib/types";
 import { insertProductSchema, updateProductSchema } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { ControllerRenderProps, useForm } from "react-hook-form";
+import { ControllerRenderProps, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import slugify from "slugify";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { createProduct, updateProduct } from "@/lib/actions/product.actions";
 
 const ProductForm = ({
   type,
@@ -33,10 +34,33 @@ const ProductForm = ({
       product && type === "Update" ? product : productDefaultValues,
   });
   
+    const onSubmit: SubmitHandler<z.infer<typeof insertProductSchema>> = async (
+        values
+    ) => {
+        console.log("Form submitted with values:", values);
+        if (type === "Create") {
+            const res = await createProduct(values);
+            if (res.success) {
+                toast.success(res.message);
+                router.push("/admin/products");
+            } else {
+                toast.error(res.error, {richColors: true});
+            }
+        }
+        if (type === "Update") {
+            const res = await updateProduct({id: productId!, ...values});
+            if (res.success) {
+                toast.success(res.message);
+                router.push("/admin/products");
+            } else {
+                toast.error(res.error, {richColors: true});
+            }
+        }
+    }
 
   return (
     <Form {...form}>
-      <form className="space-y-8">
+      <form className="space-y-8" method="POST" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-5 md:flex-row items-start">
             <FormField
             control={form.control}
@@ -147,7 +171,7 @@ const ProductForm = ({
              />
         </div>
         <div>
-            <Button type="submit" size={"lg"} disabled={form.formState.isSubmitting} className="w-full col-span-2">
+            <Button type="submit" size={"lg"} disabled={form.formState.isSubmitting} className="w-full col-span-2 cursor-pointer">
                 {form.formState.isSubmitting ? "Saving..." : `${type} Product`}
             </Button>
         </div>

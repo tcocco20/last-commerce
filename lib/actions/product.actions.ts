@@ -55,6 +55,9 @@ export async function getAllProducts({
   const data = await prisma.product.findMany({
     skip: (page - 1) * limit,
     take: limit,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const dataCount = await prisma.product.count();
@@ -111,7 +114,7 @@ export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
     if (!productExists) {
       throw new Error("Product not found");
     }
-    
+
     await prisma.product.update({
       where: { id: product.id },
       data: product,
