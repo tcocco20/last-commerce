@@ -60,15 +60,15 @@ export async function getProductById(id: string) {
 }
 
 export async function getAllProducts({
-  query,
+  // query,
   limit = PAGE_SIZE,
   page,
-  category,
-}: {
-  query: string;
+}: // category,
+{
+  // query: string;
   limit?: number;
   page: number;
-  category?: string;
+  // category?: string;
 }) {
   const data = await prisma.product.findMany({
     skip: (page - 1) * limit,
