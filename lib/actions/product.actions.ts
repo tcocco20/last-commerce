@@ -6,6 +6,7 @@ import { convertToPlainObject, formatError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { insertProductSchema, updateProductSchema } from "../validators";
+import { Product } from "../types";
 
 // get latest products
 export async function getLatestProducts() {
@@ -37,6 +38,23 @@ export async function getProductBySlug(slug: string) {
     return convertToPlainObject(data);
   } catch (error) {
     console.error("Error fetching product by slug:", error);
+    throw error;
+  }
+}
+
+export async function getProductById(id: string) {
+  try {
+    const data = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!data) {
+      throw new Error("Product not found");
+    }
+    return convertToPlainObject(data) as Product;
+  } catch (error) {
+    console.error("Error fetching product by id:", error);
     throw error;
   }
 }
