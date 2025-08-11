@@ -13,7 +13,7 @@ import { prisma } from "@/db/prisma";
 import { hashSync } from "bcrypt-ts-edge";
 import { formatError } from "../utils";
 import { ShippingAddress } from "../types";
-import { number, z } from "zod";
+import { z } from "zod";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "../generated/prisma";

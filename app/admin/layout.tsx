@@ -3,7 +3,6 @@ import { APP_NAME } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 import MainNav from "./MainNav";
-import { Input } from "@/components/ui/input";
 import AdminSearch from "@/components/admin/AdminSearch";
 
 export default function AdminLayout({

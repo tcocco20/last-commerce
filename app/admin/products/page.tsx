@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { getAllProducts, deleteProduct } from "@/lib/actions/product.actions";
 import { formatCurrency, formatId } from "@/lib/utils";
-import { Divide } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
