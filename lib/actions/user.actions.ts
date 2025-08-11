@@ -6,6 +6,7 @@ import {
   shippingAddressSchema,
   signInFormSchema,
   signUpFormSchema,
+  updateUserSchema,
 } from "../validators";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { prisma } from "@/db/prisma";
@@ -13,6 +14,9 @@ import { hashSync } from "bcrypt-ts-edge";
 import { formatError } from "../utils";
 import { ShippingAddress } from "../types";
 import { z } from "zod";
+import { PAGE_SIZE } from "../constants";
+import { revalidatePath } from "next/cache";
+import { Prisma } from "../generated/prisma";
 
 export async function signInWithCredentials(
   prevState: unknown,
@@ -160,6 +164,77 @@ export async function updateProfile(user: { name: string; email: string }) {
     });
 
     return { success: true, message: "Profile updated successfully" };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+export async function getAllUsers({
+  limit = PAGE_SIZE,
+  page = 1,
+  query,
+}: {
+  limit?: number;
+  page?: number;
+  query: string;
+}) {
+  try {
+    const queryFilter: Prisma.UserWhereInput =
+      query && query !== "all"
+        ? {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            } as Prisma.StringFilter,
+          }
+        : {};
+
+    const users = await prisma.user.findMany({
+      where: { ...queryFilter },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    const totalUsers = await prisma.user.count();
+    return {
+      data: users,
+      totalPages: Math.ceil(totalUsers / limit),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    await prisma.user.delete({
+      where: { id },
+    });
+
+    revalidatePath("/admin/users");
+
+    return { success: true, message: "User deleted successfully" };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+export async function updateUser(user: z.infer<typeof updateUserSchema>) {
+  try {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        name: user.name,
+        role: user.role,
+      },
+    });
+
+    revalidatePath(`/admin/users`);
+
+    return { success: true, message: "User updated successfully" };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
